@@ -1,4 +1,4 @@
-package com.lezhin.lezhinchallenge.domain.user;
+package com.lezhin.lezhinchallenge.domain.user.entity;
 
 public enum UserRole {
     ADMIN,      // 관리자(시스템관리자)

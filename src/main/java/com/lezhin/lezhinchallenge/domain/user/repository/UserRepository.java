@@ -1,6 +1,6 @@
 package com.lezhin.lezhinchallenge.domain.user.repository;
 
-import com.lezhin.lezhinchallenge.domain.user.User;
+import com.lezhin.lezhinchallenge.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -2,8 +2,8 @@ package com.lezhin.lezhinchallenge.domain.auth.service;
 
 
 import com.lezhin.lezhinchallenge.domain.auth.dto.AuthDto;
-import com.lezhin.lezhinchallenge.domain.user.User;
-import com.lezhin.lezhinchallenge.domain.user.UserRole;
+import com.lezhin.lezhinchallenge.domain.user.entity.User;
+import com.lezhin.lezhinchallenge.domain.user.entity.UserRole;
 import com.lezhin.lezhinchallenge.domain.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

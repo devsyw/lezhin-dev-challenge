@@ -1,6 +1,6 @@
 package com.lezhin.lezhinchallenge.common.config;
 
-import com.lezhin.lezhinchallenge.domain.user.UserRole;
+import com.lezhin.lezhinchallenge.domain.user.entity.UserRole;
 import com.lezhin.lezhinchallenge.structure.auth.SecurityUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

@@ -1,4 +1,4 @@
-package com.lezhin.lezhinchallenge.domain.user;
+package com.lezhin.lezhinchallenge.domain.user.entity;
 
 import com.lezhin.lezhinchallenge.common.entity.BaseEntity;
 import jakarta.persistence.*;
