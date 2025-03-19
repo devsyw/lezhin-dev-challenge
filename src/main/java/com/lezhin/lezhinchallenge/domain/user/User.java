@@ -1,0 +1,90 @@
+package com.lezhin.lezhinchallenge.domain.user;
+
+import com.lezhin.lezhinchallenge.common.entity.BaseEntity;
+import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Entity
+@Table(name = "users")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class User extends BaseEntity implements UserDetails {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(length = 50)
+    private String nickname;
+
+    private boolean accountNonExpired = true; // TODO (계정만료) 추가할거면 날짜 필드추가, 보류
+    private boolean accountNonLocked = true; // 잠금해제
+    private boolean credentialsNonExpired = true; // 비번만료
+    private boolean enabled = true; // 계정활성
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Set<UserRole> roles = new HashSet<>();
+
+    @Builder
+    public User(String username, String password, String email, String nickname) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.nickname = nickname;
+    }
+
+    public void addRole(UserRole role) {
+        this.roles.add(role);
+    }
+
+    public void removeRole(UserRole role) {
+        this.roles.remove(role);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return accountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+}
