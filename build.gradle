@@ -1,0 +1,68 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.3'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.lezhin'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.h2database:h2'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+tasks.register('startRedis', Exec) {
+    description = "Start Docker Compose"
+    commandLine 'docker-compose','up','-d'
+}
+
+tasks.register('startSpringBoot', Exec) {
+    description = "Start Spring Boot"
+    dependsOn startRedis
+
+    doFirst {
+        println "Redis 기동중, 대기"
+        sleep(3000)
+    }
+
+    if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+        commandLine 'cmd','/c','gradlew bootRun'
+    } else {
+        commandLine 'sh','-c','./gradlew bootRun'
+    }
+}
+
+// 한줄 실행
+tasks.register('startLocalDev') {
+    description = "Starts Redis and Spring Boot together"
+    dependsOn startSpringBoot // ./gradlew startLocalDev
+
+}
