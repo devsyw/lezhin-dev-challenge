@@ -9,6 +9,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,10 +32,10 @@ public class WebConfig {
      * HTTP 메시지 컨버터 설정
      */
     @Bean
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+    public HttpMessageConverter<?> customMessageConverter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(objectMapper());
-        converters.add(converter);
+        return converter;
     }
 
     /**
