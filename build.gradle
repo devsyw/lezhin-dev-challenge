@@ -44,30 +44,12 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-tasks.register('startRedis', Exec) {
-    description = "Start Docker Compose"
-    commandLine 'docker-compose','up','-d'
+// 메인 애플리케이션 클래스 지정
+springBoot {
+    mainClass = 'com.lezhin.lezhinchallenge.LezhinChallengeApplication'
 }
 
-tasks.register('startSpringBoot', Exec) {
-    description = "Start Spring Boot"
-    dependsOn startRedis
-
-    doFirst {
-        println "Redis 기동중, 대기"
-        sleep(3000)
-    }
-
-    if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-        commandLine 'cmd','/c','gradlew bootRun'
-    } else {
-        commandLine 'sh','-c','./gradlew bootRun'
-    }
-}
-
-// 한줄 실행
-tasks.register('startLocalDev') {
-    description = "Starts Redis and Spring Boot together"
-    dependsOn startSpringBoot // ./gradlew startLocalDev
-
+// JAR 파일 생성 설정
+bootJar {
+    archiveFileName = 'app.jar'
 }

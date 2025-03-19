@@ -51,8 +51,9 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // 필터추가
 
         // H2 콘솔 사용 시 필요한 설정
-        http.headers(headers -> headers.frameOptions().sameOrigin());
-
+        http.headers(headers ->
+                headers.frameOptions(frameOptions -> frameOptions.sameOrigin())
+        );
         return http.build();
     }
 
