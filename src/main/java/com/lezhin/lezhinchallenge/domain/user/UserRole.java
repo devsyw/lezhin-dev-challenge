@@ -7,6 +7,11 @@ public enum UserRole {
     EDITOR,     // 편집자(컨텐츠관리자)
     PREMIUM;    // 프리미엄 사용자
 
+    @Override
+    public String toString() {
+        return this.name();
+    }
+
     public String getAuthority() {
         return "ROLE_" + name();
     }
