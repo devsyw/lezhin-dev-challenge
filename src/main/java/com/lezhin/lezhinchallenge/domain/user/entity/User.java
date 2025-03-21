@@ -31,8 +31,11 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(length = 50)
+    @Column(length = 20)
     private String nickname;
+
+    @Column(nullable = false)
+    private int point;  // 포인트(만화 구매에 사용)
 
     private boolean accountNonExpired = true; // TODO (계정만료) 추가할거면 날짜 필드추가, 보류
     private boolean accountNonLocked = true; // 잠금해제
@@ -51,8 +54,26 @@ public class User extends BaseEntity implements UserDetails {
         this.password = password;
         this.email = email;
         this.nickname = nickname;
+        this.point = 0;
     }
 
+    /**
+     * 포인트 추가
+     */
+    public void addPoint(int amount) {
+        this.point += amount;
+    }
+
+    /**
+     * 포인트 사용
+     */
+    public boolean usePoint(int amount) {
+        if (this.point >= amount) {
+            this.point -= amount;
+            return true;
+        }
+        return false;
+    }
     public void addRole(UserRole role) {
         this.roles.add(role);
     }
