@@ -1,12 +1,18 @@
 package com.lezhin.lezhinchallenge.domain.auth.service;
 
 
+import com.lezhin.lezhinchallenge.common.config.JwtTokenUtil;
 import com.lezhin.lezhinchallenge.domain.auth.dto.AuthDto;
 import com.lezhin.lezhinchallenge.domain.user.entity.User;
 import com.lezhin.lezhinchallenge.domain.user.entity.UserRole;
 import com.lezhin.lezhinchallenge.domain.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +26,8 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenUtil jwtTokenUtil;
 
     /**
      * 회원가입
@@ -42,11 +50,28 @@ public class AuthService {
                 .email(request.getEmail())
                 .nickname(request.getNickname())
                 .build();
-
-        // 기본권한
         user.addRole(UserRole.USER);
 
-        // 사용자 저장
         userRepository.save(user);
+    }
+
+    /**
+     * 로그인 처리
+     * @param loginRequest 로그인 요청 정보
+     * @return JWT 토큰 응답
+     */
+    public AuthDto.JwtResponse login(AuthDto.LoginRequest loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword()
+                )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String jwt = jwtTokenUtil.generateToken(userDetails.getUsername());
+
+        return new AuthDto.JwtResponse(jwt);
     }
 }
