@@ -1,4 +1,4 @@
-package com.lezhin.lezhinchallenge.domain.purchase.dto;
+package com.lezhin.lezhinchallenge.domain.history.dto;
 
 import com.lezhin.lezhinchallenge.domain.history.entity.History;
 import com.lezhin.lezhinchallenge.domain.work.dto.WorkDto.WorkResponseDto;

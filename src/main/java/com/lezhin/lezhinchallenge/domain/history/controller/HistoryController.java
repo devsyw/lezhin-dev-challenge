@@ -1,8 +1,8 @@
-package com.lezhin.lezhinchallenge.domain.history;
+package com.lezhin.lezhinchallenge.domain.history.controller;
 
 
-import com.lezhin.domain.history.dto.HistoryResponseDto;
-import com.lezhin.domain.history.service.HistoryService;
+import com.lezhin.lezhinchallenge.domain.history.dto.HistoryDto;
+import com.lezhin.lezhinchallenge.domain.history.service.HistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +29,7 @@ public class HistoryController {
      */
     @GetMapping
     @PreAuthorize("authentication.principal.id == #userId or hasRole('ADMIN')")
-    public ResponseEntity<Page<HistoryResponseDto>> getUserViewHistory(
+    public ResponseEntity<Page<HistoryDto.HistoryResponseDto>> getUserViewHistory(
             @PathVariable Long userId,
             @PageableDefault(size = 20, sort = "viewedAt") Pageable pageable) {
 

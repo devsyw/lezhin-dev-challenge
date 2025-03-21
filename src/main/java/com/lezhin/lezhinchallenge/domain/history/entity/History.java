@@ -1,4 +1,4 @@
-package com.lezhin.lezhinchallenge.domain.purchase.entity;
+package com.lezhin.lezhinchallenge.domain.history.entity;
 
 import com.lezhin.lezhinchallenge.common.entity.BaseEntity;
 import com.lezhin.lezhinchallenge.domain.user.entity.User;

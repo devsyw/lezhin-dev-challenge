@@ -1,4 +1,4 @@
-package com.lezhin.lezhinchallenge.domain.purchase.repository;
+package com.lezhin.lezhinchallenge.domain.history.repository;
 
 import com.lezhin.lezhinchallenge.domain.history.entity.History;
 import org.springframework.data.domain.Page;
