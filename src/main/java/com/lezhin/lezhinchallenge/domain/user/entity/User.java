@@ -108,4 +108,25 @@ public class User extends BaseEntity implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
+
+    /**
+     * 사용자 정보 업데이트
+     */
+    public User update(String email, String password, String nickname) {
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        return this;
+    }
+
+    /**
+     * 사용자 활성화 상태 변경
+     */
+    public User changeEnabled(boolean enabled) {
+        this.enabled = enabled;
+        this.accountNonExpired = enabled;
+        this.accountNonLocked = enabled;
+        this.credentialsNonExpired = enabled;
+        return this;
+    }
 }

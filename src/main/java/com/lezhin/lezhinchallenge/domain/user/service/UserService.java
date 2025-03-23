@@ -182,38 +182,19 @@ public class UserService {
                 .map(UserDto.UserResponseDto::from);
     }
 
-    // 사용자 필드 업데이트 헬퍼 메서드 (실제로는 User 엔티티에 update 메서드 추가 필요)
+    /**
+     * 사용자 필드 업데이트 헬퍼 메서드
+     */
     private User updateUserFields(User user, UserDto.UserRequestDto requestDto, String encodedPassword) {
-        // 실제 구현에서는 User 클래스에 update 메서드를 추가하는 것이 좋음
-        // 예시 코드
-        // return user.update(requestDto.getEmail(), encodedPassword, requestDto.getNickname());
-
-        // 임시 구현 (실제로는 이렇게 하지 말고 엔티티에 메서드 추가)
-        User updatedUser = User.builder()
-                .username(user.getUsername())
-                .password(encodedPassword)
-                .email(requestDto.getEmail())
-                .nickname(requestDto.getNickname())
-                .build();
-
-        // ID 설정
-        // updatedUser.setId(user.getId());
-
-        // 기존 포인트와 권한 복사
-        // updatedUser.setPoint(user.getPoint());
-        // updatedUser.setRoles(user.getRoles());
-
-        return updatedUser;
+        // User 엔티티의 update 메서드 호출
+        return user.update(requestDto.getEmail(), encodedPassword, requestDto.getNickname());
     }
 
-    // 사용자 활성화 상태 변경 헬퍼 메서드 (실제로는 User 엔티티에 메서드 추가 필요)
+    /**
+     * 사용자 활성화 상태 변경 헬퍼 메서드
+     */
     private User setUserEnabledState(User user, boolean enable) {
-        // 실제 구현에서는 User 클래스에 setEnabled 메서드를 추가하는 것이 좋음
-        // 예시 코드
-        // return user.setEnabled(enable);
-
-        // 임시 구현 (실제로는 이렇게 하지 말고 엔티티에 메서드 추가)
-        // user.setEnabled(enable);
-        return user;
+        // User 엔티티의 changeEnabled 메서드 호출
+        return user.changeEnabled(enable);
     }
 }
