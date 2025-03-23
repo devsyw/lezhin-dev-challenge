@@ -1,5 +1,8 @@
 package com.lezhin.lezhinchallenge.domain.work.controller;
 
+import com.lezhin.lezhinchallenge.common.exception.BaseException;
+import com.lezhin.lezhinchallenge.common.exception.ErrorCode;
+import com.lezhin.lezhinchallenge.common.exception.custom.EpisodeNotFoundException;
 import com.lezhin.lezhinchallenge.domain.work.dto.EpisodeDto;
 import com.lezhin.lezhinchallenge.domain.work.service.EpisodeService;
 import jakarta.validation.Valid;
@@ -26,9 +29,6 @@ public class EpisodeController {
 
     /**
      * 작품별 에피소드 목록 조회
-     * @param workId 작품 ID
-     * @param pageable 페이징 정보
-     * @return 에피소드 목록
      */
     @GetMapping
     public ResponseEntity<Page<EpisodeDto.EpisodeResponseDto>> getEpisodes(
@@ -40,9 +40,6 @@ public class EpisodeController {
 
     /**
      * 특정 에피소드 조회
-     * @param workId 작품 ID
-     * @param episodeId 에피소드 ID
-     * @return 에피소드 정보
      */
     @GetMapping("/{episodeId}")
     public ResponseEntity<EpisodeDto.EpisodeResponseDto> getEpisode(
@@ -53,7 +50,7 @@ public class EpisodeController {
 
         // 요청한 작품 ID와 에피소드의 작품 ID가 일치하는지 확인
         if (!episode.getWorkId().equals(workId)) {
-            return ResponseEntity.notFound().build();
+            throw new EpisodeNotFoundException("해당 작품에 속하는 에피소드가 아닙니다");
         }
 
         // 에피소드 조회수 증가
@@ -64,9 +61,6 @@ public class EpisodeController {
 
     /**
      * 특정 에피소드 번호로 에피소드 조회
-     * @param workId 작품 ID
-     * @param episodeNumber 에피소드 번호
-     * @return 에피소드 정보
      */
     @GetMapping("/number/{episodeNumber}")
     public ResponseEntity<EpisodeDto.EpisodeResponseDto> getEpisodeByNumber(
@@ -83,8 +77,6 @@ public class EpisodeController {
 
     /**
      * 무료 에피소드 목록 조회
-     * @param workId 작품 ID
-     * @return 무료 에피소드 목록
      */
     @GetMapping("/free")
     public ResponseEntity<List<EpisodeDto.EpisodeResponseDto>> getFreeEpisodes(@PathVariable Long workId) {
@@ -93,9 +85,6 @@ public class EpisodeController {
 
     /**
      * 인기 에피소드 목록 조회
-     * @param workId 작품 ID
-     * @param limit 조회 개수
-     * @return 인기 에피소드 목록
      */
     @GetMapping("/popular")
     public ResponseEntity<List<EpisodeDto.EpisodeResponseDto>> getPopularEpisodes(
@@ -107,9 +96,6 @@ public class EpisodeController {
 
     /**
      * 에피소드 생성
-     * @param workId 작품 ID
-     * @param requestDto 에피소드 생성 요청 정보
-     * @return 생성된 에피소드 정보
      */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('CREATOR')")
@@ -119,7 +105,8 @@ public class EpisodeController {
 
         // 요청한 작품 ID와 DTO의 작품 ID가 일치하는지 확인
         if (!workId.equals(requestDto.getWorkId())) {
-            return ResponseEntity.badRequest().build();
+            throw new BaseException(ErrorCode.INVALID_INPUT_VALUE,
+                    "요청 경로의 작품 ID와 요청 본문의 작품 ID가 일치하지 않습니다");
         }
 
         EpisodeDto.EpisodeResponseDto createdEpisode = episodeService.createEpisode(requestDto);
@@ -131,10 +118,6 @@ public class EpisodeController {
 
     /**
      * 에피소드 수정
-     * @param workId 작품 ID
-     * @param episodeId 에피소드 ID
-     * @param requestDto 에피소드 수정 요청 정보
-     * @return 수정된 에피소드 정보
      */
     @PutMapping("/{episodeId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('CREATOR')")
@@ -147,7 +130,7 @@ public class EpisodeController {
 
         // 요청한 작품 ID와 에피소드의 작품 ID가 일치하는지 확인
         if (!episode.getWorkId().equals(workId)) {
-            return ResponseEntity.notFound().build();
+            throw new EpisodeNotFoundException("해당 작품에 속하는 에피소드가 아닙니다");
         }
 
         return ResponseEntity.ok(episodeService.updateEpisode(episodeId, requestDto));
@@ -155,9 +138,6 @@ public class EpisodeController {
 
     /**
      * 에피소드 삭제
-     * @param workId 작품 ID
-     * @param episodeId 에피소드 ID
-     * @return 204 No Content
      */
     @DeleteMapping("/{episodeId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('CREATOR')")
@@ -169,7 +149,7 @@ public class EpisodeController {
 
         // 요청한 작품 ID와 에피소드의 작품 ID가 일치하는지 확인
         if (!episode.getWorkId().equals(workId)) {
-            return ResponseEntity.notFound().build();
+            throw new EpisodeNotFoundException("해당 작품에 속하는 에피소드가 아닙니다");
         }
 
         episodeService.deleteEpisode(episodeId);
