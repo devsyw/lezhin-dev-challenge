@@ -48,6 +48,16 @@ public class WorkService {
     }
 
     /**
+     * 인기 작품 목록 조회 (조회수 기준)
+     */
+    @Cacheable(value = "popularWorks")
+    public List<WorkDto.WorkResponseDto> getPopularWorks() {
+        return workRepository.findTop10ByOrderByViewCountDesc().stream()
+                .map(WorkDto.WorkResponseDto::from)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * 인기 구매 작품 목록 조회 (구매수 기준)
      */
     @Cacheable(value = "popularPurchaseWorks")

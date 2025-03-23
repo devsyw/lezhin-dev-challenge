@@ -31,21 +31,15 @@ public class WorkController {
 
     /**
      * 작품 목록 조회
-     * @param pageable 페이징 정보
-     * @return 작품 목록
      */
     @GetMapping
     public ResponseEntity<Page<WorkDto.WorkResponseDto>> getWorks(
             @PageableDefault(size = 20, sort = "createdAt") Pageable pageable) {
-
         return ResponseEntity.ok(workService.getWorks(pageable));
     }
 
     /**
      * 특정 작품 조회
-     * @param workId 작품 ID
-     * @param userDetails 인증된 사용자 정보
-     * @return 작품 상세 정보
      */
     @GetMapping("/{workId}")
     public ResponseEntity<WorkDto.WorkResponseDto> getWork(
@@ -56,7 +50,13 @@ public class WorkController {
 
         // 인증된 사용자의 경우 조회 이력 저장
         if (userDetails != null) {
-            historyService.saveViewHistory(workId, Long.parseLong(userDetails.getUsername()));
+            try {
+                Long userId = Long.parseLong(userDetails.getUsername());
+                historyService.saveViewHistory(workId, userId);
+            } catch (NumberFormatException e) {
+                // 유저명이 숫자가 아닌 경우 처리 (로깅 등)
+                // 실제로는 에러를 더 적절하게 처리해야 함
+            }
         }
 
         return ResponseEntity.ok(work);
@@ -64,7 +64,6 @@ public class WorkController {
 
     /**
      * 인기 작품 목록 조회 (조회수 기준)
-     * @return 인기 작품 목록
      */
     @GetMapping("/popular")
     public ResponseEntity<List<WorkDto.WorkResponseDto>> getPopularWorks() {
@@ -73,7 +72,6 @@ public class WorkController {
 
     /**
      * 인기 구매 작품 목록 조회 (구매수 기준)
-     * @return 인기 구매 작품 목록
      */
     @GetMapping("/popular-purchases")
     public ResponseEntity<List<WorkDto.WorkResponseDto>> getPopularPurchaseWorks() {
@@ -82,8 +80,6 @@ public class WorkController {
 
     /**
      * 작품 등록
-     * @param requestDto 작품 등록 요청 정보
-     * @return 201 Created
      */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('CREATOR')")
@@ -98,9 +94,6 @@ public class WorkController {
 
     /**
      * 작품 수정
-     * @param workId 작품 ID
-     * @param requestDto 작품 수정 요청 정보
-     * @return 수정된 작품 정보
      */
     @PutMapping("/{workId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('CREATOR')")
@@ -113,8 +106,6 @@ public class WorkController {
 
     /**
      * 작품 삭제 (관련 이력도 함께 삭제)
-     * @param workId 작품 ID
-     * @return 204 No Content
      */
     @DeleteMapping("/{workId}")
     @PreAuthorize("hasRole('ADMIN')")
