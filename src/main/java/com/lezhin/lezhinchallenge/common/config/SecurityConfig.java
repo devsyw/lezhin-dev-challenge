@@ -43,9 +43,9 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/api/public/**", "/h2-console/**").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole(String.valueOf(UserRole.ADMIN))
-                        .requestMatchers("/api/creator/**").hasRole(String.valueOf(UserRole.CREATOR))
-                        .requestMatchers("/api/premium/**").hasRole(String.valueOf(UserRole.PREMIUM))
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/creator/**").hasRole("CREATOR")
+                        .requestMatchers("/api/premium/**").hasRole("PREMIUM")
                         .anyRequest().authenticated())
                 .userDetailsService(userService)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // 필터추가

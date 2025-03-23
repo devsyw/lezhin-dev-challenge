@@ -3,13 +3,12 @@ package com.lezhin.lezhinchallenge.domain.user.repository;
 import com.lezhin.lezhinchallenge.domain.user.entity.User;
 import com.lezhin.lezhinchallenge.domain.user.entity.UserRole;
 import io.lettuce.core.dynamic.annotation.Param;
-import io.netty.util.AsyncMapping;
-import org.hibernate.query.Page;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
