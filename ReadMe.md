@@ -1,7 +1,7 @@
 
 ## 주요 기능
 
-### 1. 인증 API
+## 1. 인증 API
 
 <details>
 <summary>회원가입 [POST, /api/auth/signup]</summary>
@@ -50,7 +50,7 @@
 </details>
 
 
-### 2. 사용자 API
+## 2. 사용자 API
 <details>
 <summary>사용자 목록 조회 (관리자 전용) [GET, /api/users]</summary>
 
@@ -169,7 +169,7 @@
 </details>
 
 
-### 3. 작품 API
+## 3. 작품 API
 
 <details>
 <summary>작품 목록 조회 [GET, /api/works]</summary>
@@ -260,7 +260,7 @@
 - 응답: 204 No Content
 </details>
 
-### 4. 에피소드 API
+## 4. 에피소드 API
 
 <details>
 <summary>작품별 에피소드 목록 조회 [GET, /api/works/{workId}/episodes]</summary>
@@ -360,7 +360,7 @@
 - 응답: 204 No Content
 </details>
 
-### 5. 조회이력 API
+## 5. 조회이력 API
 
 <details>
 <summary>사용자 조회 이력 목록 조회 [GET, /api/users/{userId}/view-history]</summary>
@@ -393,7 +393,7 @@
 - 응답: 204 No Content
 </details>
 
-### 5. 구매 API
+## 6. 구매 API
 
 <details>
 <summary>사용자 구매 내역 목록 조회 [GET, /api/users/{userId}/purchases]</summary>
@@ -436,7 +436,9 @@
   - 400 BAD_REQUEST: 포인트 부족 또는 무료 작품이 아닌데 FREE 타입으로 구매 시도
 </details>
 
-### 상태 코드
+* * *
+
+## 상태 코드
 <details>
 <summary>API는 다음과 같은 HTTP 상태 코드를 사용합니다.</summary>
     
@@ -456,7 +458,7 @@
 | 500 Internal Server Error | 서버 내부 오류                                       |
 </details>
 
-### 오류 응답
+## 오류 응답
 
 - 모든 API는 오류 발생 시 아래 양식으로 응답합니다.
     ```json
