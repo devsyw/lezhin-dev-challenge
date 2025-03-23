@@ -1,5 +1,8 @@
 package com.lezhin.lezhinchallenge.domain.history.service;
 
+import com.lezhin.lezhinchallenge.common.exception.custom.HistoryNotFoundException;
+import com.lezhin.lezhinchallenge.common.exception.custom.UserNotFoundException;
+import com.lezhin.lezhinchallenge.common.exception.custom.WorkNotFoundException;
 import com.lezhin.lezhinchallenge.domain.history.dto.HistoryDto;
 import com.lezhin.lezhinchallenge.domain.history.entity.History;
 import com.lezhin.lezhinchallenge.domain.history.repository.HistoryRepository;
@@ -8,7 +11,6 @@ import com.lezhin.lezhinchallenge.domain.user.repository.UserRepository;
 import com.lezhin.lezhinchallenge.domain.work.entity.Work;
 import com.lezhin.lezhinchallenge.domain.work.repository.WorkRepository;
 import com.lezhin.lezhinchallenge.domain.work.service.WorkService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,14 +32,11 @@ public class HistoryService {
 
     /**
      * 사용자의 작품 조회 이력 목록 조회
-     * @param userId 사용자 ID
-     * @param pageable 페이징 정보
-     * @return 조회 이력 목록
      */
     public Page<HistoryDto.HistoryResponseDto> getUserViewHistory(Long userId, Pageable pageable) {
         // 사용자 존재 여부 확인
         if (!userRepository.existsById(userId)) {
-            throw new EntityNotFoundException("User not found with id: " + userId);
+            throw new UserNotFoundException("ID가 " + userId + "인 사용자를 찾을 수 없습니다");
         }
 
         return historyRepository.findByUserId(userId, pageable)
@@ -46,16 +45,14 @@ public class HistoryService {
 
     /**
      * 작품 조회 이력 저장
-     * @param workId 작품 ID
-     * @param userId 사용자 ID
      */
     @Transactional
     public void saveViewHistory(Long workId, Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("ID가 " + userId + "인 사용자를 찾을 수 없습니다"));
 
         Work work = workRepository.findById(workId)
-                .orElseThrow(() -> new EntityNotFoundException("Work not found with id: " + workId));
+                .orElseThrow(() -> new WorkNotFoundException("ID가 " + workId + "인 작품을 찾을 수 없습니다"));
 
         // 이력 저장
         History history = History.builder()
@@ -71,26 +68,24 @@ public class HistoryService {
 
     /**
      * 특정 조회 이력 삭제
-     * @param userId 사용자 ID
-     * @param historyId 이력 ID
      */
     @Transactional
     public void deleteViewHistory(Long userId, Long historyId) {
         History history = historyRepository.findByIdAndUserId(historyId, userId)
-                .orElseThrow(() -> new EntityNotFoundException("History not found with id: " + historyId));
+                .orElseThrow(() -> new HistoryNotFoundException(
+                        "ID가 " + historyId + "인 조회 이력을 찾을 수 없거나 사용자의 조회 이력이 아닙니다"));
 
         historyRepository.delete(history);
     }
 
     /**
      * 사용자의 모든 조회 이력 삭제
-     * @param userId 사용자 ID
      */
     @Transactional
     public void deleteAllViewHistory(Long userId) {
         // 사용자 존재 여부 확인
         if (!userRepository.existsById(userId)) {
-            throw new EntityNotFoundException("User not found with id: " + userId);
+            throw new UserNotFoundException("ID가 " + userId + "인 사용자를 찾을 수 없습니다");
         }
 
         historyRepository.deleteAllByUserId(userId);
