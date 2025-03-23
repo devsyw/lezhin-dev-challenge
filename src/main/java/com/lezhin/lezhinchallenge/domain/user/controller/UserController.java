@@ -1,5 +1,6 @@
 package com.lezhin.lezhinchallenge.domain.user.controller;
 
+import com.lezhin.lezhinchallenge.common.exception.custom.InsufficientPermissionException;
 import com.lezhin.lezhinchallenge.domain.user.dto.UserDto;
 import com.lezhin.lezhinchallenge.domain.user.entity.UserRole;
 import com.lezhin.lezhinchallenge.domain.user.service.UserService;
@@ -26,8 +27,6 @@ public class UserController {
 
     /**
      * 사용자 목록 조회 (관리자 전용)
-     * @param pageable 페이징 정보
-     * @return 사용자 목록
      */
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -38,24 +37,20 @@ public class UserController {
 
     /**
      * 특정 사용자 조회
-     * @param userId 사용자 ID
-     * @param userDetails 인증된 사용자 정보
-     * @return 사용자 정보
      */
     @GetMapping("/{userId}")
     @PreAuthorize("authentication.principal.id == #userId or hasRole('ADMIN')")
     public ResponseEntity<UserDto.UserResponseDto> getUser(
             @PathVariable Long userId,
             @AuthenticationPrincipal UserDetails userDetails) {
+
+        validateUserAccess(userDetails, userId);
+
         return ResponseEntity.ok(userService.getUser(userId));
     }
 
     /**
      * 사용자 정보 수정
-     * @param userId 사용자 ID
-     * @param requestDto 사용자 수정 요청 정보
-     * @param userDetails 인증된 사용자 정보
-     * @return 수정된 사용자 정보
      */
     @PutMapping("/{userId}")
     @PreAuthorize("authentication.principal.id == #userId or hasRole('ADMIN')")
@@ -63,29 +58,35 @@ public class UserController {
             @PathVariable Long userId,
             @Valid @RequestBody UserDto.UserRequestDto requestDto,
             @AuthenticationPrincipal UserDetails userDetails) {
-        Long currentUserId = Long.parseLong(userDetails.getUsername());
+
+        Long currentUserId;
+        try {
+            currentUserId = Long.parseLong(userDetails.getUsername());
+        } catch (NumberFormatException e) {
+            throw new InsufficientPermissionException("잘못된 인증 정보입니다");
+        }
+
         return ResponseEntity.ok(userService.updateUser(userId, requestDto, currentUserId));
     }
 
     /**
      * 사용자 포인트 충전
-     * @param userId 사용자 ID
-     * @param requestDto 포인트 충전 요청 정보
-     * @return 충전 후 사용자 정보
      */
     @PostMapping("/{userId}/points")
     @PreAuthorize("authentication.principal.id == #userId or hasRole('ADMIN')")
     public ResponseEntity<UserDto.UserResponseDto> chargePoint(
             @PathVariable Long userId,
-            @Valid @RequestBody UserDto.PointChargeRequestDto requestDto) {
+            @Valid @RequestBody UserDto.PointChargeRequestDto requestDto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        // 권한 체크 (인증 정보의 ID와 요청된 userId가 일치하는지)
+        validateUserAccess(userDetails, userId);
+
         return ResponseEntity.ok(userService.chargePoint(userId, requestDto));
     }
 
     /**
      * 사용자 권한 추가 (관리자 전용)
-     * @param userId 사용자 ID
-     * @param role 추가할 권한
-     * @return 권한 추가 후 사용자 정보
      */
     @PostMapping("/{userId}/roles/{role}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -97,9 +98,6 @@ public class UserController {
 
     /**
      * 사용자 권한 삭제 (관리자 전용)
-     * @param userId 사용자 ID
-     * @param role 삭제할 권한
-     * @return 권한 삭제 후 사용자 정보
      */
     @DeleteMapping("/{userId}/roles/{role}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -111,9 +109,6 @@ public class UserController {
 
     /**
      * 사용자 활성화/비활성화 (관리자 전용)
-     * @param userId 사용자 ID
-     * @param enable 활성화 여부
-     * @return 상태 변경 후 사용자 정보
      */
     @PatchMapping("/{userId}/status")
     @PreAuthorize("hasRole('ADMIN')")
@@ -125,9 +120,6 @@ public class UserController {
 
     /**
      * 사용자명으로 사용자 검색 (관리자 전용)
-     * @param keyword 검색 키워드
-     * @param pageable 페이징 정보
-     * @return 검색 결과 사용자 목록
      */
     @GetMapping("/search")
     @PreAuthorize("hasRole('ADMIN')")
@@ -139,9 +131,6 @@ public class UserController {
 
     /**
      * 특정 권한을 가진 사용자 목록 조회 (관리자 전용)
-     * @param role 권한
-     * @param pageable 페이징 정보
-     * @return 권한별 사용자 목록
      */
     @GetMapping("/roles/{role}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -153,13 +142,37 @@ public class UserController {
 
     /**
      * 현재 로그인한 사용자 정보 조회
-     * @param userDetails 인증된 사용자 정보
-     * @return 현재 사용자 정보
      */
     @GetMapping("/me")
     public ResponseEntity<UserDto.UserResponseDto> getCurrentUser(
             @AuthenticationPrincipal UserDetails userDetails) {
-        Long userId = Long.parseLong(userDetails.getUsername());
+
+        Long userId;
+        try {
+            userId = Long.parseLong(userDetails.getUsername());
+        } catch (NumberFormatException e) {
+            throw new InsufficientPermissionException("잘못된 인증 정보입니다");
+        }
+
         return ResponseEntity.ok(userService.getUser(userId));
+    }
+
+    /**
+     * 사용자 권한 확인 - 본인이거나 관리자인지 검증
+     */
+    private void validateUserAccess(UserDetails userDetails, Long userId) {
+        Long currentUserId;
+        try {
+            currentUserId = Long.parseLong(userDetails.getUsername());
+        } catch (NumberFormatException e) {
+            throw new InsufficientPermissionException("잘못된 인증 정보입니다");
+        }
+
+        boolean isAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!currentUserId.equals(userId) && !isAdmin) {
+            throw new InsufficientPermissionException("다른 사용자의 정보에 접근할 권한이 없습니다");
+        }
     }
 }
