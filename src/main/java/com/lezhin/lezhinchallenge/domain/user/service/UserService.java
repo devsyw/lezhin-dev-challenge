@@ -43,7 +43,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
 
-        return UserResponseDto.from(user);
+        return UserDto.UserResponseDto.from(user);
     }
 
     /**
