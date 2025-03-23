@@ -25,36 +25,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenUtil jwtTokenUtil;
     private final AuthService authService;
 
     /**
      * 로그인 처리
-     * @param loginRequest
-     * @return JWT 토큰
      */
     @PostMapping("/login")
     public ResponseEntity<AuthDto.JwtResponse> login(@Valid @RequestBody AuthDto.LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-        );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String jwt = jwtTokenUtil.generateToken(userDetails.getUsername());
-
-        return ResponseEntity.ok(new AuthDto.JwtResponse(jwt));
+        AuthDto.JwtResponse jwtResponse = authService.login(loginRequest);
+        return ResponseEntity.ok(jwtResponse);
     }
 
     /**
      * 회원가입 처리
-     * @param signupRequest
-     * @return 회원가입 결과
      */
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody AuthDto.SignupRequest signupRequest) {
+    public ResponseEntity<Void> signup(@Valid @RequestBody AuthDto.SignupRequest signupRequest) {
         authService.signup(signupRequest);
-        return ResponseEntity.ok("회원가입 되셨습니다.");
+        return ResponseEntity.ok().build();
     }
 }
