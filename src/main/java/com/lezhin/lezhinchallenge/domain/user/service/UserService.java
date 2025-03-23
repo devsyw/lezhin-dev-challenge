@@ -1,5 +1,10 @@
 package com.lezhin.lezhinchallenge.domain.user.service;
 
+import com.lezhin.lezhinchallenge.common.exception.BaseException;
+import com.lezhin.lezhinchallenge.common.exception.ErrorCode;
+import com.lezhin.lezhinchallenge.common.exception.custom.DuplicateValueException;
+import com.lezhin.lezhinchallenge.common.exception.custom.InsufficientPermissionException;
+import com.lezhin.lezhinchallenge.common.exception.custom.UserNotFoundException;
 import com.lezhin.lezhinchallenge.domain.user.dto.UserDto;
 import com.lezhin.lezhinchallenge.domain.user.entity.User;
 import com.lezhin.lezhinchallenge.domain.user.entity.UserRole;
@@ -26,8 +31,6 @@ public class UserService {
 
     /**
      * 사용자 목록 조회
-     * @param pageable 페이징 정보
-     * @return 사용자 목록
      */
     public Page<UserDto.UserResponseDto> getUsers(Pageable pageable) {
         return userRepository.findAll(pageable)
@@ -36,69 +39,58 @@ public class UserService {
 
     /**
      * 특정 사용자 조회
-     * @param userId 사용자 ID
-     * @return 사용자 정보
      */
     public UserDto.UserResponseDto getUser(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("ID가 " + userId + "인 사용자를 찾을 수 없습니다"));
 
         return UserDto.UserResponseDto.from(user);
     }
 
     /**
      * 사용자 정보 수정
-     * @param userId 사용자 ID
-     * @param requestDto 사용자 수정 요청 정보
-     * @param currentUserId 현재 로그인한 사용자 ID
-     * @return 수정된 사용자 정보
      */
     @Transactional
     public UserDto.UserResponseDto updateUser(Long userId, UserDto.UserRequestDto requestDto, Long currentUserId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("ID가 " + userId + "인 사용자를 찾을 수 없습니다"));
 
         // 본인 혹은 관리자만 수정 가능
         if (!userId.equals(currentUserId)) {
             User currentUser = userRepository.findById(currentUserId)
-                    .orElseThrow(() -> new EntityNotFoundException("Current user not found"));
+                    .orElseThrow(() -> new UserNotFoundException("로그인한 사용자를 찾을 수 없습니다"));
 
             if (!currentUser.getRoles().contains(UserRole.ADMIN)) {
-                throw new AccessDeniedException("You don't have permission to update this user");
+                throw new InsufficientPermissionException("다른 사용자의 정보를 수정할 권한이 없습니다");
             }
         }
 
         // 이메일 중복 체크 (변경된 경우에만)
         if (!user.getEmail().equals(requestDto.getEmail()) &&
                 userRepository.existsByEmail(requestDto.getEmail())) {
-            throw new IllegalStateException("Email is already in use");
+            throw new DuplicateValueException(ErrorCode.EMAIL_ALREADY_EXISTS, "이미 사용 중인 이메일입니다");
         }
 
         // 비밀번호 변경 시 암호화
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
 
-        // 사용자 정보 업데이트 로직 (setter 대신 메서드 추가 필요)
-        user = updateUserFields(user, requestDto, encodedPassword);
+        // 사용자 정보 업데이트
+        user = user.update(requestDto.getEmail(), encodedPassword, requestDto.getNickname());
 
-        User savedUser = userRepository.save(user);
-
-        return UserDto.UserResponseDto.from(savedUser);
+        return UserDto.UserResponseDto.from(user);
     }
 
     /**
      * 사용자 포인트 충전
-     * @param userId 사용자 ID
-     * @param requestDto 포인트 충전 요청 정보
-     * @return 충전 후 사용자 정보
      */
     @Transactional
     public UserDto.UserResponseDto chargePoint(Long userId, UserDto.PointChargeRequestDto requestDto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("ID가 " + userId + "인 사용자를 찾을 수 없습니다"));
 
         // 포인트 충전 (음수 체크)
         if (requestDto.getAmount() <= 0) {
-            throw new IllegalArgumentException("Charge amount must be positive");
+            throw new BaseException(ErrorCode.INVALID_INPUT_VALUE, "충전 금액은 0보다 커야 합니다");
         }
 
         user.addPoint(requestDto.getAmount());
@@ -108,14 +100,11 @@ public class UserService {
 
     /**
      * 사용자 권한 추가
-     * @param userId 사용자 ID
-     * @param role 추가할 권한
-     * @return 권한 추가 후 사용자 정보
      */
     @Transactional
     public UserDto.UserResponseDto addRole(Long userId, UserRole role) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("ID가 " + userId + "인 사용자를 찾을 수 없습니다"));
 
         user.addRole(role);
 
@@ -124,18 +113,15 @@ public class UserService {
 
     /**
      * 사용자 권한 삭제
-     * @param userId 사용자 ID
-     * @param role 삭제할 권한
-     * @return 권한 삭제 후 사용자 정보
      */
     @Transactional
     public UserDto.UserResponseDto removeRole(Long userId, UserRole role) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("ID가 " + userId + "인 사용자를 찾을 수 없습니다"));
 
         // 기본 USER 권한은 삭제 불가
         if (role == UserRole.USER && user.getRoles().size() == 1) {
-            throw new IllegalStateException("Cannot remove the basic USER role");
+            throw new BaseException(ErrorCode.INVALID_INPUT_VALUE, "기본 USER 권한은 삭제할 수 없습니다");
         }
 
         user.removeRole(role);
@@ -145,37 +131,31 @@ public class UserService {
 
     /**
      * 사용자 활성화/비활성화
-     * @param userId 사용자 ID
-     * @param enable 활성화 여부
-     * @return 상태 변경 후 사용자 정보
      */
     @Transactional
     public UserDto.UserResponseDto setUserEnabled(Long userId, boolean enable) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("ID가 " + userId + "인 사용자를 찾을 수 없습니다"));
 
-        // 활성화/비활성화 설정 로직 (setter 대신 메서드 추가 필요)
-        user = setUserEnabledState(user, enable);
+        user.changeEnabled(enable);
 
         return UserDto.UserResponseDto.from(user);
     }
 
     /**
      * 닉네임으로 사용자 검색
-     * @param keyword 검색 키워드
-     * @param pageable 페이징 정보
-     * @return 검색 결과 사용자 목록
      */
     public Page<UserDto.UserResponseDto> searchUsersByNickname(String keyword, Pageable pageable) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            throw new BaseException(ErrorCode.INVALID_INPUT_VALUE, "검색 키워드는 비어있을 수 없습니다");
+        }
+
         return userRepository.findByNicknameContaining(keyword, pageable)
                 .map(UserDto.UserResponseDto::from);
     }
 
     /**
      * 특정 권한을 가진 사용자 목록 조회
-     * @param role 권한
-     * @param pageable 페이징 정보
-     * @return 권한별 사용자 목록
      */
     public Page<UserDto.UserResponseDto> getUsersByRole(UserRole role, Pageable pageable) {
         return userRepository.findByRole(role, pageable)
