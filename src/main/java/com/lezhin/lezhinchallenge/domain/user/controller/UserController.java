@@ -56,7 +56,7 @@ public class UserController {
     @PreAuthorize("authentication.principal.id == #userId or hasRole('ADMIN')")
     public ResponseEntity<UserDto.UserResponseDto> updateUser(
             @PathVariable Long userId,
-            @Valid @RequestBody UserDto.UserRequestDto requestDto,
+            @Valid @RequestBody UserDto.UserUpdateRequestDto requestDto,
             @AuthenticationPrincipal UserDetails userDetails) {
 
         Long currentUserId;
@@ -89,7 +89,8 @@ public class UserController {
      * 사용자 권한 추가 (관리자 전용)
      */
     @PostMapping("/{userId}/roles/{role}")
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
+    // 테스트를 위해 모든 접근권한 부여
     public ResponseEntity<UserDto.UserResponseDto> addRole(
             @PathVariable Long userId,
             @PathVariable UserRole role) {

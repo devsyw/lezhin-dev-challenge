@@ -49,7 +49,7 @@ public class UserService {
      * 사용자 정보 수정
      */
     @Transactional
-    public UserDto.UserResponseDto updateUser(Long userId, UserDto.UserRequestDto requestDto, Long currentUserId) {
+    public UserDto.UserResponseDto updateUser(Long userId, UserDto.UserUpdateRequestDto requestDto, Long currentUserId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("ID가 " + userId + "인 사용자를 찾을 수 없습니다"));
 

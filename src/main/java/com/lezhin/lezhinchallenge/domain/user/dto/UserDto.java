@@ -25,7 +25,7 @@ public class UserDto {
     public static class UserRequestDto {
 
         @NotBlank(message = "사용자명은 필수입니다")
-        @Size(min = 3, max = 50, message = "사용자명은 3자 이상 50자 이하여야 합니다")
+        @Size(min = 3, max = 20, message = "사용자명은 3자 이상 50자 이하여야 합니다")
         private String username;
 
         @NotBlank(message = "비밀번호는 필수입니다")
@@ -36,7 +36,31 @@ public class UserDto {
         @Email(message = "유효한 이메일 형식이어야 합니다")
         private String email;
 
-        @Size(max = 50, message = "닉네임은 50자 이하여야 합니다")
+        @Size(max = 20, message = "닉네임은 20자 이하여야 합니다")
+        private String nickname;
+    }
+
+    /**
+     * 사용자 정보 수정 요청 DTO
+     */
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserUpdateRequestDto {
+
+        @Size(min = 3, max = 20, message = "사용자명은 3자 이상 20자 이하여야 합니다")
+        private String username;
+
+        @NotBlank(message = "비밀번호는 필수입니다")
+        @Size(min = 6, message = "비밀번호는 6자 이상이어야 합니다")
+        private String password;
+
+        @NotBlank(message = "이메일은 필수입니다")
+        @Email(message = "유효한 이메일 형식이어야 합니다")
+        private String email;
+
+        @Size(max = 20, message = "닉네임은 20자 이하여야 합니다")
         private String nickname;
     }
 
