@@ -1,10 +1,12 @@
-# 레진엔터테인먼트 백엔드 개발자 기술 과제
-- 본 프로젝트는 결과 발표 이후 비공개 처리 예정입니다.
-* * *
+# 🧑‍💻 레진엔터테인먼트 백엔드 개발자 기술 과제
+본 프로젝트는 결과 발표 이후 비공개 처리될 예정입니다.
+
+---
 
 ## 📎 첨부파일
-- [API 테스트를 위한 Postman JSON file](docs/Lezhin.postman_collection.json)
-* * *
+- [📄 Postman 테스트 파일](docs/Lezhin.postman_collection.json)
+
+---
 
 ## ⚙️ 설치 및 실행 방법
 
@@ -47,9 +49,19 @@ docker-compose logs -f app
 ```bash
 docker-compose down
 ```
-* * *
+---
 
-## 🧭 주요 기능
+## 🧭 주요 기능 요약
+
+| 구분 | 설명 |
+|------|------|
+| 인증 API | 회원가입, 로그인 |
+| 사용자 API | 사용자 CRUD, 포인트 충전, 권한 관리 |
+| 작품 API | 목록 조회, 등록/수정/삭제, 인기 작품 |
+| 에피소드 API | 목록, 조회, 등록/수정/삭제, 인기 에피소드 |
+| 조회 이력 API | 사용자별 이력 조회/삭제 |
+| 구매 API | 작품 구매, 구매 내역 조회 |
+
 ## 1. 인증 API
 
 <details>
@@ -485,7 +497,7 @@ docker-compose down
   - 400 BAD_REQUEST: 포인트 부족 또는 무료 작품이 아닌데 FREE 타입으로 구매 시도
 </details>
 
-* * *
+---
 
 ## 🧾 상태 코드
 <details>
@@ -554,20 +566,18 @@ docker-compose down
   | P003 | 존재하지 않는 구매 내역   |
   | H001 | 존재하지 않는 조회 이력   |
 
-* * *
+---
 
 ## 🧰 기술 스택
 
-- Java 21
-- Spring Boot 3.4.3
-- Spring Data JPA
-- Spring Security
-- JWT 인증
-- H2 Database (개발용)
-- Redis (캐싱)
-- Docker & Docker Compose
+- ☕ **Java 21**
+- ⚙️ **Spring Boot 3.4.3**
+- 🗄️ **Spring Data JPA**, **Redis**
+- 🔐 **Spring Security**, **JWT 인증**
+- 🧪 **H2 Database (개발용)**
+- 🐳 **Docker & Docker Compose**
 
-* * *
+---
 
 ## 🗂️ DB 스키마
 <details>
@@ -695,7 +705,7 @@ CREATE TABLE purchases (
 ```
 </details>
 
-* * *
+---
 
 ## 🧩 고려했던 상황과 해결방안
 
@@ -753,14 +763,16 @@ ADMIN, CREATOR, EDITOR 등 세분화된 권한 체계를 설계하여 콘텐츠 
 </details>
 
 
-* * * 
+--- 
 
-## 🪞 회고
+## 🪞 회고 (Retrospective)
+
 <details>
-<summary>접기/펼치기</summary>
+<summary>클릭하여 회고 내용 보기</summary>
 
-- 개발 초기 API 설계 단계에서 스코프를 넓게 잡고 욕심을 부린 탓에, 일부 추가 구현 사항들을 끝까지 챙기지 못한 점이 아쉬웠습니다.
-- 성인 콘텐츠 예외 처리를 위해 `WorkType`(Enum)에 `ADULT` 값을 정의해두었지만, 이를 테스트할 수 있는 API 구현은 누락되어 실제 검증이 어려웠습니다.
-- 테스트 코드는 일부만 작성했으며, 본래 비즈니스 로직과 병행해 테스트도 함께 작성해야 했지만, '추가기능'이라는 인식으로 우선순위를 낮춘 점이 반성됩니다.
-- 과제 테스트 자체가 처음이다 보니, 전반적인 시간 배분과 체크가 미흡했던 것도 아쉬운 부분입니다.
+- API 설계 초기, 스코프를 넓게 잡으며 개발에 대한 욕심이 앞섰고, 그에 따라 일부 추가 구현 사항들을 끝까지 챙기지 못한 점이 아쉬웠습니다.
+- 성인 콘텐츠 처리를 위해 `WorkType` Enum에 `ADULT` 항목을 정의했지만, 해당 기능을 실제로 테스트할 수 있는 API를 구현하지 않아 검증이 어렵다는 점을 뒤늦게 인지했습니다.
+- 테스트 코드는 일부만 작성하였으며, 비즈니스 로직과 병행해 테스트를 완성하는 것이 바람직했으나, 추가 구현이라는 생각에 우선순위가 밀려 아쉬움이 남습니다.
+- 과제 테스트 자체가 처음이다 보니 시간 관리나 구현 범위 조정 등 여러 측면에서 부족함을 느꼈습니다.
+
 </details>
