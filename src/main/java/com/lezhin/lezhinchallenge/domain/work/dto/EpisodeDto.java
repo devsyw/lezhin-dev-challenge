@@ -40,7 +40,7 @@ public class EpisodeDto {
         private BigDecimal price;
 
         @NotNull(message = "무료 여부는 필수입니다")
-        private boolean isFree;
+        private Boolean isFree;
     }
 
     /**

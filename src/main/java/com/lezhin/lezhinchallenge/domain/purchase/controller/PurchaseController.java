@@ -3,6 +3,7 @@ package com.lezhin.lezhinchallenge.domain.purchase.controller;
 import com.lezhin.lezhinchallenge.common.exception.custom.InsufficientPermissionException;
 import com.lezhin.lezhinchallenge.domain.purchase.dto.PurchaseDto;
 import com.lezhin.lezhinchallenge.domain.purchase.service.PurchaseService;
+import com.lezhin.lezhinchallenge.domain.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,7 +37,6 @@ public class PurchaseController {
             @AuthenticationPrincipal UserDetails userDetails,
             @PageableDefault(size = 20, sort = "purchasedAt") Pageable pageable) {
 
-        // 권한 체크 (인증 정보의 ID와 요청된 userId가 일치하는지)
         validateUserAccess(userDetails, userId);
 
         return ResponseEntity.ok(purchaseService.getUserPurchases(userId, pageable));
@@ -81,20 +81,14 @@ public class PurchaseController {
      * 사용자 권한확인 - 본인이거나 관리자인지 검증
      */
     private void validateUserAccess(UserDetails userDetails, Long userId) {
-        // UserDetails에서 ID 추출
-        Long currentUserId;
-        try {
-            currentUserId = Long.parseLong(userDetails.getUsername());
-        } catch (NumberFormatException e) {
-            throw new InsufficientPermissionException("잘못된 인증 정보입니다");
-        }
+        User currentUser = (User) userDetails;
+        Long currentUserId = currentUser.getId();  // 직접 ID 접근
 
-        // 본인이 아니고, 관리자 권한도 없는경우
         boolean isAdmin = userDetails.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
         if (!currentUserId.equals(userId) && !isAdmin) {
-            throw new InsufficientPermissionException("다른 사용자의 구매 내역에 접근할 권한이 없습니다");
+            throw new InsufficientPermissionException("다른 사용자의 정보에 접근할 권한이 없습니다");
         }
     }
 }

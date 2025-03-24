@@ -2,6 +2,7 @@ package com.lezhin.lezhinchallenge.domain.work.controller;
 
 
 import com.lezhin.lezhinchallenge.domain.history.service.HistoryService;
+import com.lezhin.lezhinchallenge.domain.user.entity.User;
 import com.lezhin.lezhinchallenge.domain.work.dto.WorkDto;
 import com.lezhin.lezhinchallenge.domain.work.service.WorkService;
 import jakarta.validation.Valid;
@@ -48,17 +49,9 @@ public class WorkController {
 
         WorkDto.WorkResponseDto work = workService.getWork(workId);
 
-        // 인증된 사용자의 경우 조회 이력 저장
-        if (userDetails != null) {
-            try {
-                Long userId = Long.parseLong(userDetails.getUsername());
-                historyService.saveViewHistory(workId, userId);
-            } catch (NumberFormatException e) {
-                // 유저명이 숫자가 아닌 경우 처리 (로깅 등)
-                // 실제로는 에러를 더 적절하게 처리해야 함
-            }
-        }
-
+        User currentUser = (User) userDetails;
+        Long currentUserId = currentUser.getId();
+        historyService.saveViewHistory(workId, currentUserId);
         return ResponseEntity.ok(work);
     }
 
