@@ -654,13 +654,20 @@ CREATE TABLE purchases (
 #### Linux/macOS
 
 ```bash
-./run.sh
+$ chmod +x run.sh
+$ ./run.sh
 ```
 
 #### Windows
 
 ```
 run.bat
+```
+
+#### 로그 확인
+
+```bash
+docker-compose logs -f app
 ```
 
 ### 접속 정보
