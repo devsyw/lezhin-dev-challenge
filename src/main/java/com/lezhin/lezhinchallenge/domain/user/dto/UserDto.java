@@ -2,9 +2,7 @@ package com.lezhin.lezhinchallenge.domain.user.dto;
 
 import com.lezhin.lezhinchallenge.domain.user.entity.User;
 import com.lezhin.lezhinchallenge.domain.user.entity.UserRole;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -110,7 +108,8 @@ public class UserDto {
     @AllArgsConstructor
     public static class PointChargeRequestDto {
 
-        @NotBlank(message = "충전 금액은 필수입니다")
-        private int amount;
+        @NotNull(message = "amount는 필수 값입니다.")
+        @Min(value = 1, message = "amount는 1 이상이어야 합니다.")
+        private Integer amount;
     }
 }

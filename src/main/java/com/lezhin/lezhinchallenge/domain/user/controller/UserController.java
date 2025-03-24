@@ -2,6 +2,7 @@ package com.lezhin.lezhinchallenge.domain.user.controller;
 
 import com.lezhin.lezhinchallenge.common.exception.custom.InsufficientPermissionException;
 import com.lezhin.lezhinchallenge.domain.user.dto.UserDto;
+import com.lezhin.lezhinchallenge.domain.user.entity.User;
 import com.lezhin.lezhinchallenge.domain.user.entity.UserRole;
 import com.lezhin.lezhinchallenge.domain.user.service.UserService;
 import jakarta.validation.Valid;
@@ -59,12 +60,8 @@ public class UserController {
             @Valid @RequestBody UserDto.UserUpdateRequestDto requestDto,
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        Long currentUserId;
-        try {
-            currentUserId = Long.parseLong(userDetails.getUsername());
-        } catch (NumberFormatException e) {
-            throw new InsufficientPermissionException("잘못된 인증 정보입니다");
-        }
+        User currentUser = (User) userDetails;
+        Long currentUserId = currentUser.getId();
 
         return ResponseEntity.ok(userService.updateUser(userId, requestDto, currentUserId));
     }
@@ -89,8 +86,8 @@ public class UserController {
      * 사용자 권한 추가 (관리자 전용)
      */
     @PostMapping("/{userId}/roles/{role}")
-    // @PreAuthorize("hasRole('ADMIN')")
-    // 테스트를 위해 모든 접근권한 부여
+//    @PreAuthorize("hasRole('ADMIN')")
+    // 테스트를 위해 권한 오픈
     public ResponseEntity<UserDto.UserResponseDto> addRole(
             @PathVariable Long userId,
             @PathVariable UserRole role) {
@@ -148,26 +145,18 @@ public class UserController {
     public ResponseEntity<UserDto.UserResponseDto> getCurrentUser(
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        Long userId;
-        try {
-            userId = Long.parseLong(userDetails.getUsername());
-        } catch (NumberFormatException e) {
-            throw new InsufficientPermissionException("잘못된 인증 정보입니다");
-        }
+        User currentUser = (User) userDetails;
+        Long currentUserId = currentUser.getId();
 
-        return ResponseEntity.ok(userService.getUser(userId));
+        return ResponseEntity.ok(userService.getUser(currentUserId));
     }
 
     /**
      * 사용자 권한 확인 - 본인이거나 관리자인지 검증
      */
     private void validateUserAccess(UserDetails userDetails, Long userId) {
-        Long currentUserId;
-        try {
-            currentUserId = Long.parseLong(userDetails.getUsername());
-        } catch (NumberFormatException e) {
-            throw new InsufficientPermissionException("잘못된 인증 정보입니다");
-        }
+        User currentUser = (User) userDetails;
+        Long currentUserId = currentUser.getId();  // 직접 ID 접근
 
         boolean isAdmin = userDetails.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));

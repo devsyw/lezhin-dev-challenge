@@ -20,6 +20,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
+
 /**
  * JWT 필터
  */
@@ -91,10 +93,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void setErrorResponse(HttpServletResponse response, ErrorCode errorCode) throws IOException {
         response.setStatus(errorCode.getHttpStatus().value());
         response.setContentType("application/json;charset=UTF-8");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
         String jsonResponse = String.format(
                 "{\"timestamp\":\"%s\",\"status\":%d,\"error\":\"%s\",\"code\":\"%s\",\"message\":\"%s\"}",
-                java.time.LocalDateTime.now(),
+                java.time.LocalDateTime.now().format(formatter),
                 errorCode.getHttpStatus().value(),
                 errorCode.getHttpStatus().name(),
                 errorCode.getCode(),
