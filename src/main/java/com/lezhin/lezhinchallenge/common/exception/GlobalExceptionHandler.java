@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import java.util.List;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     /**
      * BaseException 및 하위 예외 처리
@@ -33,7 +35,7 @@ public class GlobalExceptionHandler {
         log.error("BaseException: {}", e.getMessage());
         final ErrorCode errorCode = e.getErrorCode();
         final ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().format(FORMATTER))
                 .status(errorCode.getHttpStatus().value())
                 .error(errorCode.getHttpStatus().name())
                 .code(errorCode.getCode())
@@ -51,7 +53,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
         log.error("MethodArgumentNotValidException: {}", e.getMessage());
         final ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().format(FORMATTER))
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.name())
                 .code(ErrorCode.INVALID_INPUT_VALUE.getCode())
@@ -78,7 +80,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
         log.error("HttpRequestMethodNotSupportedException: {}", e.getMessage());
         final ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().format(FORMATTER))
                 .status(HttpStatus.METHOD_NOT_ALLOWED.value())
                 .error(HttpStatus.METHOD_NOT_ALLOWED.name())
                 .code(ErrorCode.METHOD_NOT_ALLOWED.getCode())
@@ -96,7 +98,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, HttpServletRequest request) {
         log.error("MethodArgumentTypeMismatchException: {}", e.getMessage());
         final ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().format(FORMATTER))
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.name())
                 .code(ErrorCode.INVALID_TYPE_VALUE.getCode())
@@ -114,7 +116,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleBindException(BindException e, HttpServletRequest request) {
         log.error("BindException: {}", e.getMessage());
         final ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().format(FORMATTER))
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.name())
                 .code(ErrorCode.INVALID_INPUT_VALUE.getCode())
@@ -141,7 +143,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException e, HttpServletRequest request) {
         log.error("ConstraintViolationException: {}", e.getMessage());
         final ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().format(FORMATTER))
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.name())
                 .code(ErrorCode.INVALID_INPUT_VALUE.getCode())
@@ -159,7 +161,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException e, HttpServletRequest request) {
         log.error("AuthenticationException: {}", e.getMessage());
         final ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().format(FORMATTER))
                 .status(HttpStatus.UNAUTHORIZED.value())
                 .error(HttpStatus.UNAUTHORIZED.name())
                 .code(ErrorCode.UNAUTHORIZED.getCode())
@@ -177,7 +179,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e, HttpServletRequest request) {
         log.error("AccessDeniedException: {}", e.getMessage());
         final ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().format(FORMATTER))
                 .status(HttpStatus.FORBIDDEN.value())
                 .error(HttpStatus.FORBIDDEN.name())
                 .code(ErrorCode.ACCESS_DENIED.getCode())
@@ -195,7 +197,7 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleException(Exception e, HttpServletRequest request) {
         log.error("Exception: {}", e.getMessage(), e);
         final ErrorResponse response = ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().format(FORMATTER))
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .error(HttpStatus.INTERNAL_SERVER_ERROR.name())
                 .code(ErrorCode.INTERNAL_SERVER_ERROR.getCode())

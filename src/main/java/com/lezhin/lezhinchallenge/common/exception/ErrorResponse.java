@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ErrorResponse {
 
-    private LocalDateTime timestamp;
+    private String timestamp;
     private int status;
     private String error;
     private String code;
