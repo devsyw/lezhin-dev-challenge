@@ -1,6 +1,55 @@
+# 레진엔터테인먼트 백엔드 개발자 기술 과제
+- 본 프로젝트는 결과 발표 이후 비공개 처리 예정입니다.
+* * *
 
-## 주요 기능
+## 📎 첨부파일
+- [API 테스트를 위한 Postman JSON file](docs/Lezhin.postman_collection.json)
+* * *
 
+## ⚙️ 설치 및 실행 방법
+
+### 전제 조건
+
+- Docker 및 Docker Compose 설치
+- JDK 21 설치 (로컬 빌드 시 필요)
+
+### 실행 방법
+
+#### Linux/macOS
+
+```bash
+$ chmod +x run.sh
+$ ./run.sh
+```
+
+#### Windows
+
+```
+run.bat
+```
+
+#### 로그 확인
+
+```bash
+docker-compose logs -f app
+```
+
+### 접속 정보
+
+- **API 서버**: http://localhost:8080
+- **H2 콘솔**: http://localhost:8080/h2-console
+  - JDBC URL: `jdbc:h2:mem:lezhindb`
+  - 사용자명: `sa`
+  - 비밀번호: 없음
+
+### 종료 방법
+
+```bash
+docker-compose down
+```
+* * *
+
+## 🧭 주요 기능
 ## 1. 인증 API
 
 <details>
@@ -438,7 +487,7 @@
 
 * * *
 
-## 상태 코드
+## 🧾 상태 코드
 <details>
 <summary>API는 다음과 같은 HTTP 상태 코드를 사용합니다.</summary>
     
@@ -458,7 +507,7 @@
 | 500 Internal Server Error | 서버 내부 오류                                       |
 </details>
 
-## 오류 응답
+## 🪪 오류 응답
 
 - 모든 API는 오류 발생 시 아래 양식으로 응답합니다.
     ```json
@@ -478,7 +527,7 @@
     }
     ```
 
- 주요 에러 코드
+ - 주요 에러 코드
 
   | 코드   | 설명              |
   |------|-----------------|
@@ -507,7 +556,7 @@
 
 * * *
 
-## 기술 스택
+## 🧰 기술 스택
 
 - Java 21
 - Spring Boot 3.4.3
@@ -520,7 +569,7 @@
 
 * * *
 
-## DB 스키마
+## 🗂️ DB 스키마
 <details>
 <summary>사용자 테이블 (users)</summary>
 
@@ -648,51 +697,7 @@ CREATE TABLE purchases (
 
 * * *
 
-## 설치 및 실행 방법
-
-### 전제 조건
-
-- Docker 및 Docker Compose 설치
-- JDK 21 설치 (로컬 빌드 시 필요)
-
-### 실행 방법
-
-#### Linux/macOS
-
-```bash
-$ chmod +x run.sh
-$ ./run.sh
-```
-
-#### Windows
-
-```
-run.bat
-```
-
-#### 로그 확인
-
-```bash
-docker-compose logs -f app
-```
-
-### 접속 정보
-
-- **API 서버**: http://localhost:8080
-- **H2 콘솔**: http://localhost:8080/h2-console
-  - JDBC URL: `jdbc:h2:mem:lezhindb`
-  - 사용자명: `sa`
-  - 비밀번호: 없음
-
-## 종료 방법
-
-```bash
-docker-compose down
-```
-
-* * *
-
-## 고려했던 상황과 해결방안
+## 🧩 고려했던 상황과 해결방안
 
 <details>
 <summary>1. 빠른 콘텐츠 탐색 경험</summary>
@@ -750,6 +755,12 @@ ADMIN, CREATOR, EDITOR 등 세분화된 권한 체계를 설계하여 콘텐츠 
 
 * * * 
 
-## 회고
+## 🪞 회고
+<details>
+<summary>접기/펼치기</summary>
 
-- 처음 
+- 개발 초기 API 설계 단계에서 스코프를 넓게 잡고 욕심을 부린 탓에, 일부 추가 구현 사항들을 끝까지 챙기지 못한 점이 아쉬웠습니다.
+- 성인 콘텐츠 예외 처리를 위해 `WorkType`(Enum)에 `ADULT` 값을 정의해두었지만, 이를 테스트할 수 있는 API 구현은 누락되어 실제 검증이 어려웠습니다.
+- 테스트 코드는 일부만 작성했으며, 본래 비즈니스 로직과 병행해 테스트도 함께 작성해야 했지만, '추가기능'이라는 인식으로 우선순위를 낮춘 점이 반성됩니다.
+- 과제 테스트 자체가 처음이다 보니, 전반적인 시간 배분과 체크가 미흡했던 것도 아쉬운 부분입니다.
+</details>

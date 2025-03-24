@@ -22,4 +22,6 @@ echo.
 echo === 애플리케이션이 시작되었습니다 ===
 echo API 서버: http://localhost:8080
 echo H2 콘솔: http://localhost:8080/h2-console
+echo H2 URL: jdbc:h2:mem:lezhindb
+echo H2 계정: sa (비번 없음)
 echo.
