@@ -105,7 +105,7 @@ public class EpisodeService {
                 .episodeNumber(requestDto.getEpisodeNumber())
                 .content(requestDto.getContent())
                 .price(requestDto.getPrice())
-                .free(requestDto.getFree())
+                .isFree(requestDto.isFree())
                 .build();
 
         Episode savedEpisode = episodeRepository.save(episode);
@@ -129,7 +129,7 @@ public class EpisodeService {
                 requestDto.getTitle(),
                 requestDto.getContent(),
                 requestDto.getPrice(),
-                requestDto.getFree()
+                requestDto.isFree()
         );
 
         return EpisodeDto.EpisodeResponseDto.from(episode);

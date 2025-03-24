@@ -1,5 +1,6 @@
 package com.lezhin.lezhinchallenge.domain.work.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lezhin.lezhinchallenge.domain.work.entity.Episode;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
@@ -40,7 +41,8 @@ public class EpisodeDto {
         private BigDecimal price;
 
         @NotNull(message = "무료 여부는 필수입니다")
-        private Boolean free;
+        @JsonProperty("isFree")
+        private boolean isFree;
     }
 
     /**
@@ -62,7 +64,8 @@ public class EpisodeDto {
         private BigDecimal price;
 
         @NotNull(message = "무료 여부는 필수입니다")
-        private Boolean free;
+        @JsonProperty("isFree")
+        private boolean isFree;
     }
 
     /**
@@ -81,7 +84,7 @@ public class EpisodeDto {
         private int episodeNumber;
         private String content;
         private BigDecimal price;
-        private Boolean free;
+        private boolean isFree;
         private int viewCount;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
@@ -98,7 +101,7 @@ public class EpisodeDto {
                     .episodeNumber(episode.getEpisodeNumber())
                     .content(episode.getContent())
                     .price(episode.getPrice())
-                    .free(episode.getFree())
+                    .isFree(episode.isFree())
                     .viewCount(episode.getViewCount())
                     .createdAt(episode.getCreatedAt())
                     .updatedAt(episode.getUpdatedAt())

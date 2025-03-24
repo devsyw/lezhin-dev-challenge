@@ -4,6 +4,7 @@ package com.lezhin.lezhinchallenge.domain.history.controller;
 import com.lezhin.lezhinchallenge.common.exception.custom.InsufficientPermissionException;
 import com.lezhin.lezhinchallenge.domain.history.dto.HistoryDto;
 import com.lezhin.lezhinchallenge.domain.history.service.HistoryService;
+import com.lezhin.lezhinchallenge.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -74,17 +75,14 @@ public class HistoryController {
      * 사용자 권한 확인 - 본인이거나 관리자인지 검증
      */
     private void validateUserAccess(UserDetails userDetails, Long userId) {
-        Long currentUserId;
-        try {
-            currentUserId = Long.parseLong(userDetails.getUsername());
-        } catch (NumberFormatException e) {
-            throw new InsufficientPermissionException("잘못된 인증 정보입니다");
-        }
+        User currentUser = (User) userDetails;
+        Long currentUserId = currentUser.getId();
+
         boolean isAdmin = userDetails.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
         if (!currentUserId.equals(userId) && !isAdmin) {
-            throw new InsufficientPermissionException("다른 사용자의 조회 이력에 접근할 권한이 없습니다");
+            throw new InsufficientPermissionException("다른 사용자의 정보에 접근할 권한이 없습니다");
         }
     }
 }

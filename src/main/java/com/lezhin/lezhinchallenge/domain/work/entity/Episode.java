@@ -1,5 +1,6 @@
 package com.lezhin.lezhinchallenge.domain.work.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lezhin.lezhinchallenge.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -39,19 +40,20 @@ public class Episode extends BaseEntity {
     private BigDecimal price;
 
     @Column(nullable = false)
-    private Boolean free;
+    @JsonProperty("isFree")
+    private boolean isFree;
 
     @Column(nullable = false)
     private Integer viewCount;
 
     @Builder
-    public Episode(Work work, String title, Integer episodeNumber, String content, BigDecimal price, Boolean free) {
+    public Episode(Work work, String title, Integer episodeNumber, String content, BigDecimal price, boolean isFree) {
         this.work = work;
         this.title = title;
         this.episodeNumber = episodeNumber;
         this.content = content;
         this.price = price;
-        this.free = free;
+        this.isFree = isFree;
         this.viewCount = 0;
     }
 
@@ -65,10 +67,10 @@ public class Episode extends BaseEntity {
     /**
      * 에피소드 정보 업데이트
      */
-    public void update(String title, String content, BigDecimal price, Boolean free) {
+    public void update(String title, String content, BigDecimal price, boolean isFree) {
         this.title = title;
         this.content = content;
         this.price = price;
-        this.free = free;
+        this.isFree = isFree;
     }
 }
