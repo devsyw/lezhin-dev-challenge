@@ -20,6 +20,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -47,6 +48,16 @@ public class User extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Set<UserRole> roles = new HashSet<>();
+
+    @Builder // test code 용도로 생성
+    public User(Long id, String username, String password, String email, String nickname) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.nickname = nickname;
+        this.point = 0;
+    }
 
     @Builder
     public User(String username, String password, String email, String nickname) {
