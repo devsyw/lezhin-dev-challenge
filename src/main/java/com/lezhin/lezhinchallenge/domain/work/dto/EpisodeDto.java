@@ -40,7 +40,7 @@ public class EpisodeDto {
         private BigDecimal price;
 
         @NotNull(message = "무료 여부는 필수입니다")
-        private Boolean isFree;
+        private Boolean free;
     }
 
     /**
@@ -62,7 +62,7 @@ public class EpisodeDto {
         private BigDecimal price;
 
         @NotNull(message = "무료 여부는 필수입니다")
-        private boolean isFree;
+        private Boolean free;
     }
 
     /**
@@ -81,7 +81,7 @@ public class EpisodeDto {
         private int episodeNumber;
         private String content;
         private BigDecimal price;
-        private boolean isFree;
+        private Boolean free;
         private int viewCount;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
@@ -98,7 +98,7 @@ public class EpisodeDto {
                     .episodeNumber(episode.getEpisodeNumber())
                     .content(episode.getContent())
                     .price(episode.getPrice())
-                    .isFree(episode.isFree())
+                    .free(episode.getFree())
                     .viewCount(episode.getViewCount())
                     .createdAt(episode.getCreatedAt())
                     .updatedAt(episode.getUpdatedAt())

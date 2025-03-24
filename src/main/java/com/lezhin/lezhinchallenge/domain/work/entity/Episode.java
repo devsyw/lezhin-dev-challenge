@@ -30,7 +30,7 @@ public class Episode extends BaseEntity {
     private String title;
 
     @Column(nullable = false)
-    private int episodeNumber;
+    private Integer episodeNumber;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -39,19 +39,19 @@ public class Episode extends BaseEntity {
     private BigDecimal price;
 
     @Column(nullable = false)
-    private boolean isFree;
+    private Boolean free;
 
     @Column(nullable = false)
-    private int viewCount;
+    private Integer viewCount;
 
     @Builder
-    public Episode(Work work, String title, int episodeNumber, String content, BigDecimal price, boolean isFree) {
+    public Episode(Work work, String title, Integer episodeNumber, String content, BigDecimal price, Boolean free) {
         this.work = work;
         this.title = title;
         this.episodeNumber = episodeNumber;
         this.content = content;
         this.price = price;
-        this.isFree = isFree;
+        this.free = free;
         this.viewCount = 0;
     }
 
@@ -65,10 +65,10 @@ public class Episode extends BaseEntity {
     /**
      * 에피소드 정보 업데이트
      */
-    public void update(String title, String content, BigDecimal price, boolean isFree) {
+    public void update(String title, String content, BigDecimal price, Boolean free) {
         this.title = title;
         this.content = content;
         this.price = price;
-        this.isFree = isFree;
+        this.free = free;
     }
 }

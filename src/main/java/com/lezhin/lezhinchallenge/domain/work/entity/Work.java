@@ -42,10 +42,10 @@ public class Work extends BaseEntity {
     private String thumbnailUrl;
 
     @Column(nullable = false)
-    private int viewCount;  // 조회수
+    private Integer viewCount;  // 조회수
 
     @Column(nullable = false)
-    private int purchaseCount;  // 구매수
+    private Integer purchaseCount;  // 구매수
 
     @OneToMany(mappedBy = "work", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Episode> episodes = new ArrayList<>();

@@ -35,7 +35,7 @@ public class User extends BaseEntity implements UserDetails {
     private String nickname;
 
     @Column(nullable = false)
-    private int point;  // 포인트(만화 구매에 사용)
+    private Integer point;  // 포인트(만화 구매에 사용)
 
     private boolean accountNonExpired = true; // TODO (계정만료) 추가할거면 날짜 필드추가, 보류
     private boolean accountNonLocked = true; // 잠금해제
@@ -60,14 +60,14 @@ public class User extends BaseEntity implements UserDetails {
     /**
      * 포인트 추가
      */
-    public void addPoint(int amount) {
+    public void addPoint(Integer amount) {
         this.point += amount;
     }
 
     /**
      * 포인트 사용
      */
-    public boolean usePoint(int amount) {
+    public boolean usePoint(Integer amount) {
         if (this.point >= amount) {
             this.point -= amount;
             return true;
