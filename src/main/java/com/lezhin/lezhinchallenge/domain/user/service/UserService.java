@@ -163,16 +163,16 @@ public class UserService {
     /**
      * 사용자 필드 업데이트 헬퍼 메서드
      */
+    @Deprecated
     private User updateUserFields(User user, UserDto.UserRequestDto requestDto, String encodedPassword) {
-        // User 엔티티의 update 메서드 호출
         return user.update(requestDto.getEmail(), encodedPassword, requestDto.getNickname());
     }
 
     /**
      * 사용자 활성화 상태 변경 헬퍼 메서드
      */
+    @Deprecated
     private User setUserEnabledState(User user, boolean enable) {
-        // User 엔티티의 changeEnabled 메서드 호출
         return user.changeEnabled(enable);
     }
 }

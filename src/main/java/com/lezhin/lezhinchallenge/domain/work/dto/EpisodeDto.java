@@ -21,7 +21,7 @@ public class EpisodeDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public class EpisodeCreateRequestDto {
+    public static class EpisodeCreateRequestDto {
 
         @NotNull(message = "작품 ID는 필수입니다")
         private Long workId;
@@ -50,7 +50,7 @@ public class EpisodeDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public class EpisodeUpdateRequestDto {
+    public static class EpisodeUpdateRequestDto {
 
         @NotBlank(message = "제목은 필수입니다")
         private String title;
@@ -72,7 +72,7 @@ public class EpisodeDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public class EpisodeResponseDto {
+    public static class EpisodeResponseDto {
 
         private Long id;
         private Long workId;
